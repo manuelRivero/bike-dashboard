@@ -105,6 +105,10 @@ export const productsSlice = createSlice({
         },
         resetExcelErrors: (state) => {
             state.uploadExcelErrors = null
+        },
+        resetProductDetail: (state) => {
+            console.log("reset")
+            state.productDetail = null
         }
     },
     extraReducers: {
@@ -189,6 +193,6 @@ export const productsSlice = createSlice({
         },
     },
 })
-export const { resetExcelErrors, resetProductSuccess, resetEditProductSuccess, resetZipErrors } = productsSlice.actions
+export const { resetProductDetail, resetExcelErrors, resetProductSuccess, resetEditProductSuccess, resetZipErrors } = productsSlice.actions
 
 export default productsSlice.reducer

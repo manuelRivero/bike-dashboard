@@ -275,7 +275,7 @@ export default function Products() {
                                         )}
                                     />
                                 </Box>
-                                <Box>
+                                {/* <Box>
                                     <Controller
                                         name="tags"
                                         control={control}
@@ -297,7 +297,7 @@ export default function Products() {
                                             />
                                         )}
                                     />
-                                </Box>
+                                </Box> */}
                             </Box>
                             <Button
                                 isLoading={false}
@@ -320,7 +320,6 @@ export default function Products() {
                                         'Precio',
                                         'Stock',
                                         'Descuento',
-                                        'Etiquetas',
                                         'Estatus',
                                         'Acciones',
                                     ]}
@@ -331,9 +330,6 @@ export default function Products() {
                                             e.price,
                                             e.stock,
                                             e.discount ? e.discount : 0,
-                                            e.tags
-                                                .map((tag) => tag.name)
-                                                .join(','),
                                             e.status
                                                 ? e.status.available
                                                     ? 'Disponible'
@@ -346,7 +342,7 @@ export default function Products() {
                                         ]
                                     })}
                                 />
-
+                                {productsData.data.length === 0 && (<p>No hay productos para mostrar</p>)}
                                 <ReactPaginate
                                     forcePage={page}
                                     pageClassName={classes.page}

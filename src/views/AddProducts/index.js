@@ -18,11 +18,9 @@ import { primaryColor } from 'assets/jss/material-dashboard-react.js'
 import { useDispatch, useSelector } from 'react-redux'
 import { postProducts } from 'store/products'
 import CustomModal from 'components/CustomModal'
-import { resetProductSuccess } from 'store/products'
 import LoadinScreen from 'components/LoadingScreen'
 import { getProductDetail } from 'store/products'
-import { resetEditProductSuccess } from 'store/products'
-import { editProduct } from 'store/products'
+import { editProduct, resetProductDetail, resetEditProductSuccess, resetProductSuccess } from 'store/products'
 
 // schema
 const schema = yup.object({
@@ -31,7 +29,7 @@ const schema = yup.object({
         .min(1, 'Campo obligatorio')
         .required('Campo obligatorio'),
     name: yup.string().required('Campo obligatorio'),
-    tags: yup.string().required('Campo obligatorio'),
+    // tags: yup.string().required('Campo obligatorio'),
     price: yup.string().required('Campo obligatorio'),
     stock: yup.string().required('Campo obligatorio'),
     description: yup.string().required('Campo obligatorio'),
@@ -116,7 +114,6 @@ export default function AddProducts() {
     const history = useHistory()
 
     const params = useParams()
-    console.log('params', params)
     const { user } = useSelector((state) => state.auth)
     const {
         loadingProduct,
@@ -138,13 +135,12 @@ export default function AddProducts() {
         handleSubmit,
         reset,
         formState: { errors },
-        watch,
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
             images: [],
             name: '',
-            tags: '',
+            // tags: '',
             price: '',
             stock: '',
             description: '',
@@ -178,10 +174,10 @@ export default function AddProducts() {
 
         data.append('name', values.name)
         data.append('price', values.price)
-        data.append(
-            'tags',
-            JSON.stringify(values.tags.split(',').map((e) => ({ name: e })))
-        )
+        // data.append(
+        //     'tags',
+        //     JSON.stringify(values.tags.split(',').map((e) => ({ name: e })))
+        // )
         data.append('stock', values.stock)
         data.append('description', values.description)
 
@@ -212,26 +208,40 @@ export default function AddProducts() {
     }
     useEffect(async () => {
         if (params.id) {
+
             dispatch(getProductDetail({ access: user.token, id: params.id }))
+        } else {
+            dispatch(resetProductDetail())
         }
-    }, [])
+    }, [params])
     useEffect(async () => {
         if (productDetail) {
             reset({
                 images: productDetail.images.map((e) => ({ preview: e.url })),
                 name: productDetail.name,
-                tags: productDetail.tags.map((e) => e.name).join(','),
+                // tags: productDetail.tags.map((e) => e.name).join(','),
                 price: productDetail.price,
                 stock: productDetail.stock,
                 description: productDetail.description,
                 status: productDetail.status.available ? 0 : 1,
             })
+        }else {
+            reset({
+                images: [],
+                name: '',
+                // tags: '',
+                price: '',
+                stock: '',
+                description: '',
+                status: '',
+            })
         }
     }, [productDetail])
+    console.log("productDetail", productDetail)
     if (loadingProductDetail) {
         return <LoadinScreen />
     }
-    console.log('values', watch())
+
     return (
         <section>
             <form onSubmit={handleSubmit(submit)}>
@@ -240,7 +250,6 @@ export default function AddProducts() {
                 </Box>
                 <div className={classes.imagesRow}>
                     {fields.map((file, index) => {
-                        console.log('file', file)
                         return (
                             <div
                                 className={classes.imagesWrapper}
@@ -345,7 +354,7 @@ export default function AddProducts() {
                     />
                 </Box>
                 <Box className={classes.inputRow}>
-                    <Controller
+                    {/* <Controller
                         name="tags"
                         control={control}
                         render={({ field, fieldState }) => (
@@ -359,7 +368,7 @@ export default function AddProducts() {
                                 onChange={field.onChange}
                             />
                         )}
-                    />
+                    /> */}
                     <Box>
                         <p style={{ margin: 0 }}>Estatus</p>
                         <Box>
@@ -408,7 +417,6 @@ export default function AddProducts() {
                                 )}
                             />
                             <Box>
-                                {console.log('errors', errors)}
                                 {errors.status && (
                                     <TextDanger>
                                         <p className={classes.errorText}>
