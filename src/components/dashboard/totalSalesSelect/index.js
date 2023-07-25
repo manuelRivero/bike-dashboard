@@ -8,6 +8,7 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers'
 import MomentUtils from '@date-io/moment'
+import moment from 'moment'
 
 const useStyles = makeStyles({
     root: {
@@ -29,9 +30,14 @@ export default function TotalSalesSelect() {
     const [selectedValue, setSelectedValue] = useState(new Date())
 
     const onChange = (value) => {
-        console.log('date value', value.toDate())
+        console.log("value", moment(value).format('DD-MM-YYYY'))
         setSelectedValue(value)
-        dispatch(getSalesByDate({ access: user.token, from: value.toDate() }))
+        dispatch(
+            getSalesByDate({
+                access: user.token,
+                from: moment(value).format('DD-MM-YYYY'),
+            })
+        )
 
         return
     }
