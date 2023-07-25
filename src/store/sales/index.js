@@ -89,7 +89,7 @@ export const salesSlice = createSlice({
         },
         [getSales.fulfilled]: (state, action) => {
             state.loadingSalesData = false
-            state.salesData = {sales:action.payload.data.sales}
+            state.salesData = {sales:action.payload.data.sales, pageInfo:{total: action.payload.data.total}}
         },
         [getSales.rejected]: (state) => {
             state.loadingSalesData = false

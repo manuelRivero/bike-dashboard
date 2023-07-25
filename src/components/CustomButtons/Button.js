@@ -44,7 +44,7 @@ export default function RegularButton(props) {
     })
     return (
         <Button {...rest} classes={muiClasses} className={btnClasses}>
-            {props.isLoading ? <LoopIcon /> : children}
+            {props.isLoading ? <LoopIcon className={classes.spinner} /> : children}
         </Button>
     )
 }

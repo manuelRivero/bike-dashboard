@@ -9,11 +9,20 @@ import Card from 'components/Card/Card.js'
 import CardHeader from 'components/Card/CardHeader.js'
 import CardBody from 'components/Card/CardBody.js'
 import Button from 'components/CustomButtons/Button'
+import ReactPaginate from 'react-paginate'
+
+
+//icons 
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+
 import { useDispatch, useSelector } from 'react-redux'
-import { getSales, changeSalesStatus } from 'store/sales'
+import {
+    // getSales,
+    changeSalesStatus,
+} from 'store/sales'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-
 
 // form
 import { useForm, Controller } from 'react-hook-form'
@@ -32,6 +41,7 @@ import {
     Popper,
 } from '@material-ui/core'
 import moment from 'moment'
+import { getSales } from 'store/sales'
 
 const styles = {
     cardCategoryWhite: {
@@ -99,6 +109,37 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
     },
+    pagination: {
+        display: 'flex',
+        margin: 0,
+        padding: 0,
+        listStyle: 'none',
+        gap: '1rem',
+        marginTop: '1rem',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    page: {
+        padding: '.5rem',
+        borderRadius: '4px',
+        border: 'solid 1px transparent',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '25px',
+        height: '25px',
+        "& > a":{
+            color:'#3c4858'
+
+        }
+    },
+    activePage: {
+        border: 'solid 1px #00ACC1 !important',
+        "& > a":{
+            color:'#00ACC1'
+
+        }
+    },
 }
 
 const useStyles = makeStyles(styles)
@@ -108,27 +149,23 @@ export default function Sales() {
     const dispatch = useDispatch()
     const { user } = useSelector((state) => state.auth)
     const { salesData, loadingSalesData } = useSelector((state) => state.sales)
-    const [filter, setFilter] = useState(null)
+    const [page, setPage] = useState(0)
 
-    const handleFilter = (filter) => {
-        setFilter(filter)
+    const handlePageClick = ({ selected }) => {
+        setPage(selected)
+        const element = document.getElementById('table-header')
+        element.scrollIntoView()
     }
+
     useEffect(() => {
-        console.log('use effect filter', filter)
-        if (filter !== null) {
-            dispatch(
-                getSales({ access: user.token, filters: { status: filter } })
-            )
-        } else {
-            dispatch(getSales({ access: user.token, filters: {} }))
-        }
-    }, [filter])
+        dispatch(getSales({ access: user.token, filters: {page:0} }))
+    }, [])
     console.log('salesData', salesData)
     return (
         <GridContainer>
             <GridItem xs={12} sm={12} md={12}>
                 <Card>
-                    <CardHeader color="primary">
+                    <CardHeader color="primary" id="table-header">
                         <h4 className={classes.cardTitleWhite}>
                             Tabla de ordenes
                         </h4>
@@ -138,7 +175,7 @@ export default function Sales() {
                         </p>
                     </CardHeader>
                     <CardBody>
-                        <Box className={classes.filtersWrapper}>
+                        {/* <Box className={classes.filtersWrapper}>
                             <Button
                                 isLoading={false}
                                 variant="contained"
@@ -202,10 +239,11 @@ export default function Sales() {
                             >
                                 Cancelado
                             </Button>
-                        </Box>
+                        </Box> */}
                         {loadingSalesData ? (
                             <p>Cargando datos...</p>
                         ) : (
+                            <>
                             <Table
                                 tableHeaderColor="primary"
                                 tableHead={[
@@ -213,7 +251,6 @@ export default function Sales() {
                                     'Total',
                                     'Fecha',
                                     'Estatus',
-                                    'Cambiar estatus',
                                     'Acciones',
                                 ]}
                                 tableData={salesData.sales.map((e) => {
@@ -223,14 +260,14 @@ export default function Sales() {
                                         <p key={`sale-total-${e._id}`}>
                                             {e.total}
                                         </p>,
-                                        <p key={`sale-date-${e._id}`}>{moment(e.createdAt).format("DD-MM-YYYY HH:mm:ss")}</p>,
+                                        <p key={`sale-date-${e._id}`}>
+                                            {moment(e.createdAt).format(
+                                                'DD-MM-YYYY HH:mm:ss'
+                                            )}
+                                        </p>,
                                         <p key={`sale-status-${e._id}`}>
                                             {e.status}
                                         </p>,
-                                        <ChangeStatusDropdown
-                                            key={e._id}
-                                            sale={e}
-                                        />,
                                         <Link
                                             key={`detail-button-${e._id}`}
                                             to={`/admin/orders/detail/${e._id}`}
@@ -248,8 +285,45 @@ export default function Sales() {
                                     ]
                                 })}
                             />
+                              <ReactPaginate
+                                    forcePage={page}
+                                    pageClassName={classes.page}
+                                    containerClassName={classes.pagination}
+                                    activeClassName={classes.activePage}
+                                    breakLabel="..."
+                                    nextLabel={
+                                        <Button
+                                            isLoading={false}
+                                            variant="contained"
+                                            color="primary"
+                                            type="button"
+                                            justIcon
+                                        >
+                                            <ChevronRightIcon />
+                                        </Button>
+                                    }
+                                    onPageChange={(e) => handlePageClick(e)}
+                                    pageRangeDisplayed={5}
+                                    pageCount={Math.ceil(
+                                        salesData.pageInfo.total / 10
+                                    )}
+                                    previousLabel={
+                                        <Button
+                                            isLoading={false}
+                                            variant="contained"
+                                            color="primary"
+                                            type="button"
+                                            justIcon
+                                        >
+                                            <ChevronLeftIcon />
+                                        </Button>
+                                    }
+                                    renderOnZeroPageCount={null}
+                                />
+                            </>
                         )}
                     </CardBody>
+                  
                 </Card>
             </GridItem>
         </GridContainer>

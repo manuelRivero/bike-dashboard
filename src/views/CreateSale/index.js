@@ -654,6 +654,7 @@ export default function CreateSale() {
                 <Box className={classes.submitRow}>
                     <Button
                         isLoading={loadingCreateSale}
+                        disabled={loadingCreateSale}
                         variant="contained"
                         color="primary"
                         type="submit"

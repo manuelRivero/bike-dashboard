@@ -12,6 +12,16 @@ import {
 } from "assets/jss/material-dashboard-react.js";
 
 const buttonStyle = {
+  "@keyframes rotate": {
+    "0%": {transform:"rotate(0deg)"},
+    "100%": {transform:"rotate(360deg)"},
+  },
+  spinner:{
+    animation: `$rotate 1000ms linear`,
+    animationIterationCount: 'infinite'
+
+  },
+
   button: {
     minHeight: "auto",
     minWidth: "auto",
