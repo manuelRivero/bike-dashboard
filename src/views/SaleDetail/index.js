@@ -15,8 +15,19 @@ import { useParams } from 'react-router-dom'
 import { Box } from '@material-ui/core'
 import moment from 'moment'
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+
+const paymentMethod = {
+    0: 'Efectivo',
+    1: 'Transferencia o pago con tarjeta',
+}
+
+const orderType = {
+    0: 'Venta',
+    1: 'Reparación o mantenimiento',
+    2: 'Venta y reparación',
+}
 
 const styles = {
     cardCategoryWhite: {
@@ -46,12 +57,12 @@ const styles = {
             lineHeight: '1',
         },
     },
-    backButton:{
-        display:'flex',
-        gap:'1rem',
-        alignItems:'center',
-        cursor:'pointer'
-    }
+    backButton: {
+        display: 'flex',
+        gap: '1rem',
+        alignItems: 'center',
+        cursor: 'pointer',
+    },
 }
 
 const useStyles = makeStyles(styles)
@@ -70,68 +81,94 @@ export default function SaleDetail() {
     }, [])
     return (
         <>
-        <Box className={classes.backButton} onClick={()=> history.push('/admin/orders')}>
-            <ArrowBackIcon />
-            <p>Volver a ordenes</p>
-        </Box>
-        <GridContainer>
-            <GridItem xs={12} sm={12} md={12}>
-                <Card>
-                    <CardHeader color="primary">
-                        <h4 className={classes.cardTitleWhite}>
-                            Detalle de la orden {id}
-                        </h4>
-                        <p className={classes.cardCategoryWhite}>
-                            Visualiza los productos y todo el detalle de la
-                            orden
-                        </p>
-                    </CardHeader>
-                    <CardBody>
-                        {loadingSaleData ? (
-                            <p>Cargando datos...</p>
-                        ) : (
-                            <Box>
-                                <p>
-                                    Status: <strong>{saleData.status}</strong>
-                                </p>
-                                <p>
-                                    Fecha:{' '}
-                                    <strong>
-                                        {' '}
-                                        {moment(saleData.createdAt).format(
-                                            'DD-MM-YYYY HH:mm:ss'
-                                        )}{' '}
-                                    </strong>
-                                </p>
-                                <p>
-                                    Total de la orden:{' '}
-                                    <strong> {saleData.total} </strong>
-                                </p>
-                                <Table
-                                    tableHeaderColor="primary"
-                                    tableHead={[
-                                        'Id del producto',
-                                        'Nombre del producto',
-                                        'Cantidad',
-                                        'Precio',
-                                    ]}
-                                    tableData={saleData.products.map(
-                                        (product) => {
-                                            return [
-                                                product.data._id,
-                                                product.data.name,
-                                                product.quantity,
-                                                product.data.price,
-                                            ]
-                                        }
-                                    )}
-                                />
-                            </Box>
-                        )}
-                    </CardBody>
-                </Card>
-            </GridItem>
-        </GridContainer>
+            <Box
+                className={classes.backButton}
+                onClick={() => history.push('/admin/orders')}
+            >
+                <ArrowBackIcon />
+                <p>Volver a ordenes</p>
+            </Box>
+            <GridContainer>
+                <GridItem xs={12} sm={12} md={12}>
+                    <Card>
+                        <CardHeader color="primary">
+                            <h4 className={classes.cardTitleWhite}>
+                                Detalle de la orden {id}
+                            </h4>
+                            <p className={classes.cardCategoryWhite}>
+                                Visualiza los productos y todo el detalle de la
+                                orden
+                            </p>
+                        </CardHeader>
+                        <CardBody>
+                            {loadingSaleData ? (
+                                <p>Cargando datos...</p>
+                            ) : (
+                                <Box>
+                                    <p>
+                                        Status:{' '}
+                                        <strong>{saleData.status}</strong>
+                                    </p>
+                                    <p>
+                                        Metodo de pago:{' '}
+                                        <strong>
+                                            {
+                                                paymentMethod[
+                                                    saleData.paymentMethod
+                                                ]
+                                            }
+                                        </strong>
+                                    </p>
+                                    <p>
+                                        Tipo de orden:{' '}
+                                        <strong>
+                                            {orderType[saleData.orderType]}
+                                        </strong>
+                                    </p>
+                                    <p>
+                                        Fecha:{' '}
+                                        <strong>
+                                            {' '}
+                                            {moment(saleData.createdAt).format(
+                                                'DD-MM-YYYY HH:mm:ss'
+                                            )}{' '}
+                                        </strong>
+                                    </p>
+                                    <p>
+                                        Total de la orden:{' '}
+                                        <strong> {saleData.total} </strong>
+                                    </p>
+                                    {saleData.description && <p>
+                                        Descripción de la orden:{' '}
+                                        <strong> {saleData.description} </strong>
+                                    </p>}
+                                    {saleData.products ? (
+                                        <Table
+                                            tableHeaderColor="primary"
+                                            tableHead={[
+                                                'Id del producto',
+                                                'Nombre del producto',
+                                                'Cantidad',
+                                                'Precio',
+                                            ]}
+                                            tableData={saleData.products.map(
+                                                (product) => {
+                                                    return [
+                                                        product.data._id,
+                                                        product.data.name,
+                                                        product.quantity,
+                                                        product.data.price,
+                                                    ]
+                                                }
+                                            )}
+                                        />
+                                    ): (<p>Esta orden no contiene productos</p>)}
+                                </Box>
+                            )}
+                        </CardBody>
+                    </Card>
+                </GridItem>
+            </GridContainer>
         </>
     )
 }
