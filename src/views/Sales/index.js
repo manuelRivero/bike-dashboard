@@ -285,6 +285,9 @@ export default function Sales() {
                                     ]
                                 })}
                             />
+                            {salesData.sales.length === 0 && (
+                                <p style={{textAlign:"center"}}>No hay ordenes para mostrar</p>
+                            )}
                               <ReactPaginate
                                     forcePage={page}
                                     pageClassName={classes.page}

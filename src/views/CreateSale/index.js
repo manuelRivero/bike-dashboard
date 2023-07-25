@@ -137,7 +137,7 @@ export default function CreateSale() {
         resolver: yupResolver(schema),
         defaultValues: {
             orderType: '0',
-            paymentMethod: '1',
+            paymentMethod: '0',
             description: '',
             products: [],
             repairTotal: '0',
@@ -152,11 +152,11 @@ export default function CreateSale() {
     const watchOrderType = watch('orderType')
     const watchProducts = watch('products')
     const watchRepairTotal = watch('repairTotal')
+    const watchPaymentMethod = watch('paymentMethod')
 
     const [searchValue, setSearchValue] = useState('')
     const [options, setOptions] = useState([])
     const [isOpen, setIsOpen] = useState(false)
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0)
     const [formAlert, setFormAlert] = useState(null)
 
     const changeInputHandler = async () => {
@@ -226,7 +226,7 @@ export default function CreateSale() {
         let data = {}
         switch (values.orderType) {
             case '0':
-                data.orderType = '0'
+                data.orderType = 0
                 data.paymentMethod = values.paymentMethod
                 data.products = values.products.map((e) => ({
                     _id: e._id,
@@ -235,21 +235,19 @@ export default function CreateSale() {
 
                 break
             case '1':
-                data.orderType = '1'
-                data.paymentMethod = values.paymentMethod
+                data.orderType = 1
                 data.paymentMethod = values.paymentMethod
                 data.description = values.description
                 data.repairTotal = values.repairTotal
 
                 break
                 case '2':
-                    data.orderType = '2'
-                    data.paymentMethod = values.paymentMethod
+                    data.orderType = 2
                     data.paymentMethod = values.paymentMethod
                     data.description = values.description
                     data.repairTotal = values.repairTotal
                     data.paymentMethod = values.paymentMethod
-                    data.products = values.map((e) => ({
+                    data.products = values.products.map((e) => ({
                         _id: e._id,
                         quantity: e.selectedQuantity,
                     }));
@@ -317,7 +315,7 @@ export default function CreateSale() {
     
     return (
         <Box>
-            <form onSubmit={handleSubmit(submit)}>
+            <form onSubmit={handleSubmit(submit)} autoComplete="off">
                 <Box>
                     <Box>
                         <Box>
@@ -602,11 +600,11 @@ export default function CreateSale() {
                                         checked: classes.checked,
                                     }}
                                     checked={
-                                        selectedPaymentMethod === 0
+                                        watchPaymentMethod === "0"
                                             ? true
                                             : false
                                     }
-                                    onChange={() => setSelectedPaymentMethod(0)}
+                                    onChange={() => setValue("paymentMethod", "0")}
                                     inputProps={{
                                         'aria-label': 'primary checkbox',
                                     }}
@@ -622,11 +620,11 @@ export default function CreateSale() {
                                         checked: classes.checked,
                                     }}
                                     checked={
-                                        selectedPaymentMethod === 1
+                                        watchPaymentMethod === "1"
                                             ? true
                                             : false
                                     }
-                                    onChange={() => setSelectedPaymentMethod(1)}
+                                    onChange={() => setValue("paymentMethod", "1")}
                                     inputProps={{
                                         'aria-label': 'primary checkbox',
                                     }}
